@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QRCueX — Clean QR codes, styled your way, in seconds</title>
+<meta name="description" content="Generate a crisp QR code for any link or text, pick your colors, drop in a logo, download it ready to print.">
+<link rel="canonical" href="https://qrcuex.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="QRCueX">
+<meta property="og:url" content="https://qrcuex.com/">
+<meta property="og:title" content="QRCueX — Clean QR codes, styled your way, in seconds">
+<meta property="og:description" content="Generate a crisp QR code for any link or text, pick your colors, drop in a logo, download it ready to print.">
+<meta property="og:image" content="https://qrcuex.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="QRCueX — Clean QR codes, styled your way, in seconds">
+<meta name="twitter:description" content="Generate a crisp QR code for any link or text, pick your colors, drop in a logo, download it ready to print.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhafxfFezFKutTSqefQZwGtrNkp7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#12151c; --panel2:#171b24; --text:#f2f3f5; --muted:#9aa3b2;
+    --accent:#3ddc97; --border:#232836;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 16px 80px}
+  header{text-align:center;margin-bottom:24px}
+  h1{font-size:1.6rem;margin:0 0 6px}
+  header p{color:var(--muted);margin:0;font-size:.95rem;max-width:520px;margin:0 auto}
+  .layout{display:grid;grid-template-columns:1fr;gap:20px}
+  @media(min-width:640px){.layout{grid-template-columns:1fr 1fr}}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .panel h2{font-size:.85rem;margin:0 0 14px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  label{display:block;font-size:.85rem;color:var(--muted);margin:14px 0 6px}
+  label:first-of-type{margin-top:0}
+  input[type=text],input[type=url],select{width:100%;background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font:inherit}
+  input[type=color]{width:52px;height:36px;padding:2px;border-radius:8px;border:1px solid var(--border);background:var(--panel2)}
+  .color-row{display:flex;gap:16px;align-items:center}
+  .color-row > div{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+  input[type=file]{width:100%;color:var(--muted);font-size:.85rem}
+  input[type=range]{width:100%}
+  .preview{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+  #qrcode{background:#fff;padding:16px;border-radius:12px}
+  #qrcode img, #qrcode canvas{display:block;max-width:100%;height:auto}
+  button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:12px 22px;font-weight:600;font-size:.95rem;background:var(--accent);color:#06241a;width:100%}
+  .note{font-size:.8rem;color:var(--muted);margin-top:20px;line-height:1.5}
+  footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
+  footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>QRCueX</h1>
+    <p>Type a link or any text, style it, download a print-ready QR code. Everything renders right here in your browser.</p>
+  </header>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>Content</h2>
+      <label for="qrText">Link or text</label>
+      <input type="text" id="qrText" value="https://trailpawsgear.com" placeholder="https://your-link.com">
+
+      <label for="size">Size (px)</label>
+      <input type="range" id="size" min="150" max="600" step="10" value="300">
+
+      <label for="level">Error correction</label>
+      <select id="level">
+        <option value="L">Low (L) — smallest code</option>
+        <option value="M" selected>Medium (M) — balanced</option>
+        <option value="Q">Quartile (Q) — more resilient</option>
+        <option value="H">High (H) — best if adding a logo</option>
+      </select>
+
+      <label>Colors</label>
+      <div class="color-row">
+        <div>
+          <span style="font-size:.78rem;color:var(--muted)">Code</span>
+          <input type="color" id="colorDark" value="#0b0d12">
+        </div>
+        <div>
+          <span style="font-size:.78rem;color:var(--muted)">Background</span>
+          <input type="color" id="colorLight" value="#ffffff">
+        </div>
+      </div>
+
+      <label for="logoInput">Logo in the center (optional)</label>
+      <input type="file" id="logoInput" accept="image/png,image/jpeg">
+    </div>
+
+    <div class="panel preview">
+      <h2 style="align-self:flex-start">Preview</h2>
+      <div id="qrcode"></div>
+      <button id="downloadBtn">Download PNG</button>
+    </div>
+  </div>
+
+  <p class="note">
+    This generates a static QR code: the content you type is baked directly into the pattern, so once it's printed it always points to the same thing. A version that lets you change the destination after printing, with scan counts over time, is coming as a separate upgrade once the small bit of server infrastructure it needs is in place.
+  </p>
+
+  <footer>
+    Nothing you type here is sent anywhere, the code is generated locally in your browser.
+    <br><a href="https://qrcuex.com">qrcuex.com</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const qrText = document.getElementById('qrText');
+  const size = document.getElementById('size');
+  const level = document.getElementById('level');
+  const colorDark = document.getElementById('colorDark');
+  const colorLight = document.getElementById('colorLight');
+  const logoInput = document.getElementById('logoInput');
+  const qrDiv = document.getElementById('qrcode');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  let logoImg = null;
+  let qr = null;
+
+  const levelMap = { L: QRCode.CorrectLevel.L, M: QRCode.CorrectLevel.M, Q: QRCode.CorrectLevel.Q, H: QRCode.CorrectLevel.H };
+
+  function render(){
+    qrDiv.innerHTML = '';
+    const s = parseInt(size.value, 10);
+    qr = new QRCode(qrDiv, {
+      text: qrText.value || ' ',
+      width: s,
+      height: s,
+      colorDark: colorDark.value,
+      colorLight: colorLight.value,
+      correctLevel: levelMap[level.value]
+    });
+    if (logoImg){
+      setTimeout(()=> drawLogo(s), 60); // qrcodejs renders async into canvas/img
+    }
+  }
+
+  function drawLogo(s){
+    const canvas = qrDiv.querySelector('canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const logoSize = s * 0.22;
+    const x = (canvas.width - logoSize) / 2;
+    const y = (canvas.height - logoSize) / 2;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(x - 6, y - 6, logoSize + 12, logoSize + 12);
+    ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+    const img = qrDiv.querySelector('img');
+    if (img) img.style.display = 'none';
+  }
+
+  [qrText, size, level, colorDark, colorLight].forEach(el=> el.addEventListener('input', render));
+
+  logoInput.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if (!file) { logoImg = null; render(); return; }
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      const img = new Image();
+      img.onload = ()=>{ logoImg = img; render(); };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  downloadBtn.addEventListener('click', ()=>{
+    const canvas = qrDiv.querySelector('canvas');
+    if (!canvas) return;
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = 'qrcuex-code.png';
+    a.click();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
